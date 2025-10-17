@@ -1,3 +1,38 @@
+# Alma Linux
+
+locals {
+  almalinux_defvers_map = { "9.6" = {}, "10.0" = {} }
+  almalinux_defvers     = var.install_defaults.almalinux ? local.almalinux_defvers_map : null
+  almalinux_vers_merged = merge(var.almalinux_versions, local.almalinux_defvers)
+}
+
+resource "openstack_images_image_v2" "almalinux" {
+  for_each = local.almalinux_vers_merged
+
+  name = "almalinux-${each.key}"
+  image_source_url = coalesce(try(each.value.url, null), templatestring(var.almalinux_defaults.url_tmpl, {
+    version       = each.key,
+    architecture  = var.architecture,
+    version_major = split(".", each.key)[0]
+  }))
+  disk_format      = var.disk_format
+  container_format = var.container_format
+
+  properties = {
+    hypervisor_type  = var.hypervisor_type
+    architecture     = var.architecture
+    secure_execution = coalesce(try(each.value.secure_execution, null), var.almalinux_defaults.secure_execution)
+    os_distro        = "Alma-${each.key}"
+    powervc_comments = "This base image is managed by Terraform."
+  }
+
+  tags = ["Alma", "Alma-${split(".", each.key)[0]}", "Alma${each.key}"]
+
+  lifecycle {
+    ignore_changes = [image_cache_path]
+  }
+}
+
 # Rocky Linux
 
 locals {

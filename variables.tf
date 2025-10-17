@@ -19,9 +19,28 @@ variable "container_format" {
 
 variable "install_defaults" {
   type = object({
+    almalinux  = optional(bool, true)
     rockylinux = optional(bool, true)
     ubuntu     = optional(bool, true)
   })
+  default = {}
+}
+
+# Alma Linux specifc variables
+
+variable "almalinux_defaults" {
+  type = object({
+    url_tmpl         = optional(string, "https://repo.almalinux.org/almalinux/almalinux/$${version}/cloud/$${architecture}/images/AlmaLinux-$${version_major}-GenericCloud-latest.$${architecture}.qcow2")
+    secure_execution = optional(string, "False")
+  })
+  default = {}
+}
+
+variable "almalinux_versions" {
+  type = map(object({
+    url              = optional(string, null)
+    secure_execution = optional(string, "False")
+  }))
   default = {}
 }
 
