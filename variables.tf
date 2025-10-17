@@ -30,7 +30,7 @@ variable "install_defaults" {
 
 variable "almalinux_defaults" {
   type = object({
-    url_tmpl         = optional(string, "https://repo.almalinux.org/almalinux/almalinux/$${version}/cloud/$${architecture}/images/AlmaLinux-$${version_major}-GenericCloud-latest.$${architecture}.qcow2")
+    url_tmpl         = optional(string, "https://repo.almalinux.org/almalinux/$${version}/cloud/$${architecture}/images/AlmaLinux-$${version_major}-GenericCloud-latest.$${architecture}.qcow2")
     secure_execution = optional(string, "False")
   })
   default = {}
